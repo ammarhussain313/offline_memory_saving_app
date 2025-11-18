@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:memories_app/core/utils/app_constants.dart';
+import 'package:memories_app/models/memories_model.dart';
+import 'package:memories_app/view_model/memory_view_model.dart';
 import 'package:memories_app/widgets/textfield.dart';
+import 'package:provider/provider.dart';
 
 class AddMemoryView extends StatefulWidget {
   const AddMemoryView({super.key});
@@ -23,12 +28,27 @@ class _AddMemoryViewState extends State<AddMemoryView> {
   final cityFocus = FocusNode();
   final countryFocus = FocusNode();
 
-  void pickImage() async{
+  void pickImage() async {
     final imagePicker = ImagePicker();
-    final XFile? image = await imagePicker.pickImage(source: ImageSource.camera);
+    final XFile? image = await imagePicker.pickImage(
+      source: ImageSource.camera,
+    );
+    if (image != null && image.path.isNotEmpty) {
+      context.read<MemoryViewModel>().setImage(image.path);
+    }
+  }
 
-    if(image != null && image.path.isNotEmpty){
-      //Here I have to add provider save image functionality
+  Future<void> saveMemory() async{
+    final myMemory = MemoriesModel(
+      title: titleController.text,
+      description: descriptionController.text,
+      city: cityController.text,
+      country: countryController.text,
+      image: context.read<MemoryViewModel>().memoryImage,
+    );
+    final isAdded = await context.read<MemoryViewModel>().addMemory(myMemory);
+    if(isAdded){
+      Navigator.pop(context);
     }
   }
 
@@ -56,20 +76,29 @@ class _AddMemoryViewState extends State<AddMemoryView> {
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.05),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   pickImage();
                 },
-                child: CircleAvatar(
-                  radius: 100,
-                  backgroundColor: Colors.deepOrange.withValues(alpha: 0.7),
-                  child: Text(
-                    "Add Image",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                child: Consumer<MemoryViewModel>(
+                  builder: (context, value, child) {
+                    return CircleAvatar(
+                      radius: 100,
+                      backgroundColor: Colors.deepOrange.withValues(alpha: 0.7),
+                      backgroundImage: value.memoryImage.isNotEmpty
+                          ? FileImage(File(value.memoryImage))
+                          : null,
+                      child: value.memoryImage.isNotEmpty
+                          ? SizedBox()
+                          : Text(
+                              "Add Image",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 20),
@@ -84,10 +113,48 @@ class _AddMemoryViewState extends State<AddMemoryView> {
               CustomTextField(
                 controller: descriptionController,
                 currentFocus: descriptionFocus,
-                hintText: "Enter description",
+                nextFocus: countryFocus,
+                hintText: "Enter Country",
                 labelText: "Description",
               ),
-              SizedBox(height: 6),
+              SizedBox(height: 12),
+              CustomTextField(
+                controller: countryController,
+                currentFocus: countryFocus,
+                nextFocus: cityFocus,
+                hintText: "Enter country",
+                labelText: "Country",
+              ),
+              SizedBox(height: 12),
+              CustomTextField(
+                controller: cityController,
+                currentFocus: cityFocus,
+                hintText: "Enter city",
+                labelText: "City",
+              ),
+              SizedBox(height: 45),
+              GestureDetector(
+                onTap: () {
+                  saveMemory();
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 60,
+                  width: MediaQuery.of(context).size.width * 0.5,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.deepOrange.withValues(alpha: 0.7),
+                  ),
+                  child: Text(
+                    "Save",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

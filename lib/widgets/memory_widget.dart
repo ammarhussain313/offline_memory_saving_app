@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:memories_app/constants/image_constants.dart';
 
@@ -17,7 +19,7 @@ class MemoryWidget extends StatelessWidget {
   final String description;
   final String city;
   final String country;
-  final List<String> images;
+  final String images;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class MemoryWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
               image: DecorationImage(
-                image: AssetImage(ImageConstants.memoriesLogo),
+                image: FileImage(File(images)),
                 fit: BoxFit.fill,
               ),
             ),

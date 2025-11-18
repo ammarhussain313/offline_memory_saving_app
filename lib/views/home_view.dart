@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:memories_app/constants/image_constants.dart';
 import 'package:memories_app/core/utils/app_constants.dart';
+import 'package:memories_app/view_model/memory_view_model.dart';
 import 'package:memories_app/views/memories/add_memory_view.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/memory_widget.dart';
 
@@ -10,6 +12,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<MemoryViewModel>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -19,14 +22,14 @@ class HomeView extends StatelessWidget {
         ),
       ),
       body: ListView.builder(
-        itemCount: 5,
+        itemCount: provider.myMemories.length,
         itemBuilder: (context, index) {
           return MemoryWidget(
-            title: "Title",
-            description: "Description",
-            city: "City",
-            country: "Country",
-            images: [],
+            title: provider.myMemories[index].title ?? "",
+            description: provider.myMemories[index].description ?? "",
+            city: provider.myMemories[index].city ?? "",
+            country: provider.myMemories[index].country ?? "",
+            images: provider.myMemories[index].image ?? "",
           );
         },
       ),
