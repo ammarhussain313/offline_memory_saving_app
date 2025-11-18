@@ -11,7 +11,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(MemoriesModelAdapter());
-  await Hive.openBox("memories");
+  await Hive.openBox<MemoriesModel>("memories");
   runApp(const MyApp());
 }
 

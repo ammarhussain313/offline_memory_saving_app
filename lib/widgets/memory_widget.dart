@@ -42,11 +42,22 @@ class MemoryWidget extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 6),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(22),
-              image: DecorationImage(
+              image: images.isNotEmpty
+                  ? DecorationImage(
                 image: FileImage(File(images)),
-                fit: BoxFit.fill,
-              ),
+                fit: BoxFit.cover,
+              )
+                  : null,
+              color: images.isEmpty ? Colors.grey[200] : null,
             ),
+            child: images.isEmpty
+                ? Center(
+              child: Icon(
+                Icons.photo_library,
+                color: Colors.grey[500],
+              ),
+            )
+                : null,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,

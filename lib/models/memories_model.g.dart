@@ -16,12 +16,29 @@ class MemoriesModelAdapter extends TypeAdapter<MemoriesModel> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return MemoriesModel();
+    return MemoriesModel(
+      title: fields[0] as String?,
+      description: fields[1] as String?,
+      country: fields[3] as String?,
+      city: fields[2] as String?,
+      image: fields[4] as String?,
+    );
   }
 
   @override
   void write(BinaryWriter writer, MemoriesModel obj) {
-    writer.writeByte(0);
+    writer
+      ..writeByte(5)
+      ..writeByte(0)
+      ..write(obj.title)
+      ..writeByte(1)
+      ..write(obj.description)
+      ..writeByte(2)
+      ..write(obj.city)
+      ..writeByte(3)
+      ..write(obj.country)
+      ..writeByte(4)
+      ..write(obj.image);
   }
 
   @override
