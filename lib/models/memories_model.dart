@@ -1,4 +1,9 @@
-class MemoriesModel {
+import 'package:hive/hive.dart';
+part 'memories_model.g.dart';
+
+@override
+@HiveType(typeId: 0)
+class MemoriesModel extends HiveObject{
   String? title;
   String? description;
   String? city;

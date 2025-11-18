@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:memories_app/models/memories_model.dart';
 import 'package:memories_app/view_model/memory_view_model.dart';
 import 'package:memories_app/views/splash_view.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(MemoriesModelAdapter());
+  await Hive.openBox("memories");
   runApp(const MyApp());
 }
 
