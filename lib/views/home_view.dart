@@ -19,8 +19,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-
-  void deleteMemory(MemoriesModel memory)async{
+  void deleteMemory(MemoriesModel memory) async {
     memory.delete();
     Navigator.pop(context);
   }
@@ -52,64 +51,71 @@ class _HomeViewState extends State<HomeView> {
         valueListenable: MemoriesBox.getMemory().listenable(),
         builder: (context, box, _) {
           final data = box.values.toList().cast<MemoriesModel>();
-          return ListView.builder(
-            shrinkWrap: true,
-            reverse: true,
-            itemCount: data.length,
-            itemBuilder: (context, index) {
-              final memoryIndex = data.length - 1 - index;
-              final memory = data[memoryIndex];
+          return data.isEmpty
+              ? Center(
+                  child: Text(
+                    "No Memory right now. Add your memories to go to the Flashback",
+                    textAlign: TextAlign.center,
+                  ),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  reverse: true,
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    final memoryIndex = data.length - 1 - index;
+                    final memory = data[memoryIndex];
 
-              return GestureDetector(
-                onLongPress: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text("Delete Memory"),
-                        content: Text(
-                          "Are you sure you want to remove this memory?",
-                        ),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  deleteMemory(memory);
-                                },
-                                child: Text(
-                                  "Delete",
-                                  style: TextStyle(color: Colors.red),
+                    return GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Delete Memory"),
+                              content: Text(
+                                "Are you sure you want to remove this memory?",
+                              ),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        deleteMemory(memory);
+                                      },
+                                      child: Text(
+                                        "Delete",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("Cancel"),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text("Cancel"),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: MemoryWidget(
-                  title: memory.title ?? "",
-                  description: memory.description ?? "",
-                  city: memory.city ?? "",
-                  country: memory.country ?? "",
-                  images: memory.image ?? "",
-                  isLiked: memory.isLiked ?? false,
-                  onTapLike: () {
-                    provider.toggleLike(memory);
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      child: MemoryWidget(
+                        title: memory.title ?? "",
+                        description: memory.description ?? "",
+                        city: memory.city ?? "",
+                        country: memory.country ?? "",
+                        images: memory.image ?? "",
+                        isLiked: memory.isLiked ?? false,
+                        onTapLike: () {
+                          provider.toggleLike(memory);
+                        },
+                      ),
+                    );
                   },
-                ),
-              );
-            },
-          );
+                );
         },
       ),
       floatingActionButton: InkWell(
