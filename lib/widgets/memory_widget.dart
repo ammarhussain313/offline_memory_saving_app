@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:memories_app/constants/image_constants.dart';
 
 import '../core/utils/app_constants.dart';
 
@@ -13,6 +12,8 @@ class MemoryWidget extends StatelessWidget {
     required this.city,
     required this.country,
     required this.images,
+    required this.isLiked,
+    this.onTapLike,
   });
 
   final String title;
@@ -20,6 +21,8 @@ class MemoryWidget extends StatelessWidget {
   final String city;
   final String country;
   final String images;
+  final bool isLiked;
+  final VoidCallback? onTapLike;
 
   @override
   Widget build(BuildContext context) {
@@ -44,19 +47,16 @@ class MemoryWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(22),
               image: images.isNotEmpty
                   ? DecorationImage(
-                image: FileImage(File(images)),
-                fit: BoxFit.cover,
-              )
+                      image: FileImage(File(images)),
+                      fit: BoxFit.cover,
+                    )
                   : null,
               color: images.isEmpty ? Colors.grey[200] : null,
             ),
             child: images.isEmpty
                 ? Center(
-              child: Icon(
-                Icons.photo_library,
-                color: Colors.grey[500],
-              ),
-            )
+                    child: Icon(Icons.photo_library, color: Colors.grey[500]),
+                  )
                 : null,
           ),
           Row(
@@ -68,10 +68,17 @@ class MemoryWidget extends StatelessWidget {
               ),
 
               Spacer(),
-              Icon(
-                Icons.star_border_purple500_sharp,
-                color: Colors.blueGrey,
-                size: 32,
+              InkWell(
+                onTap: onTapLike,
+                child: isLiked ? Icon(
+                  Icons.star,
+                  color: Colors.deepOrange,
+                  size: 32,
+                ) : Icon(
+                  Icons.star_border_purple500_sharp,
+                  color: Colors.blueGrey,
+                  size: 32,
+                ),
               ),
             ],
           ),

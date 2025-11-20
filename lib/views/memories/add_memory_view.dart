@@ -16,7 +16,7 @@ class AddMemoryView extends StatefulWidget {
 }
 
 class _AddMemoryViewState extends State<AddMemoryView> {
-  final List<String> images = [];
+  late MemoryViewModel _provider;
 
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
@@ -38,7 +38,7 @@ class _AddMemoryViewState extends State<AddMemoryView> {
     }
   }
 
-  Future<void> saveMemory() async{
+  Future<void> saveMemory() async {
     final myMemory = MemoriesModel(
       title: titleController.text,
       description: descriptionController.text,
@@ -47,9 +47,24 @@ class _AddMemoryViewState extends State<AddMemoryView> {
       image: context.read<MemoryViewModel>().memoryImage,
     );
     final isAdded = await context.read<MemoryViewModel>().addMemory(myMemory);
-    if(isAdded){
+    if (isAdded) {
       Navigator.pop(context);
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _provider = Provider.of<MemoryViewModel>(context, listen: false);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _provider.clearImage();
+    });
+    super.dispose();
   }
 
   @override
